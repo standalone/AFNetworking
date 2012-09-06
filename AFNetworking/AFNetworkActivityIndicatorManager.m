@@ -62,9 +62,6 @@ static NSTimeInterval const kAFNetworkActivityIndicatorInvisibilityDelay = 0.17;
         return nil;
     }
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incrementActivityCount) name:AFNetworkingOperationDidStartNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(decrementActivityCount) name:AFNetworkingOperationDidFinishNotification object:nil];
-        
     return self;
 }
 
@@ -77,17 +74,29 @@ static NSTimeInterval const kAFNetworkActivityIndicatorInvisibilityDelay = 0.17;
     [super dealloc];
 }
 
+- (void) setEnabled:(BOOL)enabled {
+	if (_enabled == enabled) return;
+	
+	_enabled = enabled;
+	
+	if (enabled) {
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incrementActivityCount) name:AFNetworkingOperationDidStartNotification object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(decrementActivityCount) name:AFNetworkingOperationDidFinishNotification object:nil];
+	} else {
+		[[NSNotificationCenter defaultCenter] removeObserver: self name: AFNetworkingOperationDidStartNotification object: nil];
+		[[NSNotificationCenter defaultCenter] removeObserver: self name: AFNetworkingOperationDidFinishNotification object: nil];
+	}
+}
+
 - (void)updateNetworkActivityIndicatorVisibilityDelayed {
-    if (self.enabled) {
-        // Delay hiding of activity indicator for a short interval, to avoid flickering
-        if (![self isNetworkActivityIndicatorVisible]) {
-            [self.activityIndicatorVisibilityTimer invalidate];
-            self.activityIndicatorVisibilityTimer = [NSTimer timerWithTimeInterval:kAFNetworkActivityIndicatorInvisibilityDelay target:self selector:@selector(updateNetworkActivityIndicatorVisibility) userInfo:nil repeats:NO];
-            [[NSRunLoop mainRunLoop] addTimer:self.activityIndicatorVisibilityTimer forMode:NSRunLoopCommonModes];
-        } else {
-            [self performSelectorOnMainThread:@selector(updateNetworkActivityIndicatorVisibility) withObject:nil waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
-        }
-    }
+	// Delay hiding of activity indicator for a short interval, to avoid flickering
+	if (![self isNetworkActivityIndicatorVisible]) {
+		[self.activityIndicatorVisibilityTimer invalidate];
+		self.activityIndicatorVisibilityTimer = [NSTimer timerWithTimeInterval:kAFNetworkActivityIndicatorInvisibilityDelay target:self selector:@selector(updateNetworkActivityIndicatorVisibility) userInfo:nil repeats:NO];
+		[[NSRunLoop mainRunLoop] addTimer:self.activityIndicatorVisibilityTimer forMode:NSRunLoopCommonModes];
+	} else {
+		[self performSelectorOnMainThread:@selector(updateNetworkActivityIndicatorVisibility) withObject:nil waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+	}
 }
 
 - (BOOL)isNetworkActivityIndicatorVisible {
