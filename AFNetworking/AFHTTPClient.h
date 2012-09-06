@@ -22,7 +22,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define _SYSTEMCONFIGURATION_H				1
+#define USE_SYSTEM_CONFIGURATION				1
 
 @class AFHTTPRequestOperation;
 
@@ -75,7 +75,7 @@
  - NSCoding cannot serialize / deserialize block properties, so an archive of an HTTP client will not include any reachability callback block that may be set.
  */
 
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 typedef enum {
     AFNetworkReachabilityStatusUnknown          = -1,
     AFNetworkReachabilityStatusNotReachable     = 0,
@@ -130,7 +130,7 @@ typedef enum {
 
   @warning This property requires the `SystemConfiguration` framework. Add it in the active target's "Link Binary With Library" build phase, and add `#import <SystemConfiguration/SystemConfiguration.h>` to the header prefix of the project (`Prefix.pch`).
  */
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 @property (readonly, nonatomic, assign) AFNetworkReachabilityStatus networkReachabilityStatus;
 @property (readonly) BOOL offline;
 #endif
@@ -170,7 +170,7 @@ typedef enum {
  
  @warning This method requires the `SystemConfiguration` framework. Add it in the active target's "Link Binary With Library" build phase, and add `#import <SystemConfiguration/SystemConfiguration.h>` to the header prefix of the project (`Prefix.pch`).
  */
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 - (void)setReachabilityStatusChangeBlock:(void (^)(AFNetworkReachabilityStatus status))block;
 #endif
 
@@ -503,7 +503,7 @@ extern NSString * AFQueryStringFromParametersWithEncoding(NSDictionary *paramete
  
  @warning In order for network reachability to be monitored, include the `SystemConfiguration` framework in the active target's "Link Binary With Library" build phase, and add `#import <SystemConfiguration/SystemConfiguration.h>` to the header prefix of the project (`Prefix.pch`).
  */
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 extern NSString * const AFNetworkingReachabilityDidChangeNotification;
 extern NSString * const AFNetworkingReachabilityNotificationStatusItem;
 #endif

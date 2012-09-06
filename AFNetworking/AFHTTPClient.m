@@ -32,7 +32,7 @@
 #import <UIKit/UIKit.h>
 #endif
 
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netinet/in.h>
 #import <netinet6/in6.h>
@@ -52,7 +52,7 @@
 
 #pragma mark -
 
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 NSString * const AFNetworkingReachabilityDidChangeNotification = @"com.alamofire.networking.reachability.change";
 NSString * const AFNetworkingReachabilityNotificationStatusItem = @"AFNetworkingReachabilityNotificationStatusItem";
 
@@ -93,6 +93,7 @@ static NSString * AFBase64EncodedStringFromString(NSString *string) {
     return [[[NSString alloc] initWithData:mutableData encoding:NSASCIIStringEncoding] autorelease];
 }
 
+NSString * AFPercentEscapedQueryStringPairMemberFromStringWithEncoding(NSString *string, NSStringEncoding encoding);
 NSString * AFPercentEscapedQueryStringPairMemberFromStringWithEncoding(NSString *string, NSStringEncoding encoding) {
     // Escape characters that are legal in URIs, but have unintentional semantic significance when used in a query string parameter
     static NSString * const kAFLegalCharactersToBeEscaped = @":/.?&=;+!@$()~";
@@ -203,13 +204,13 @@ static NSString * AFPropertyListStringFromParameters(NSDictionary *parameters) {
 @property (readwrite, nonatomic, retain) NSMutableArray *registeredHTTPOperationClassNames;
 @property (readwrite, nonatomic, retain) NSMutableDictionary *defaultHeaders;
 @property (readwrite, nonatomic, retain) NSOperationQueue *operationQueue;
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 @property (readwrite, nonatomic, assign) AFNetworkReachabilityRef networkReachability;
 @property (readwrite, nonatomic, assign) AFNetworkReachabilityStatus networkReachabilityStatus;
 @property (readwrite, nonatomic, copy) AFNetworkReachabilityStatusBlock networkReachabilityStatusBlock;
 #endif
 
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 - (void)startMonitoringNetworkReachability;
 - (void)stopMonitoringNetworkReachability;
 #endif
@@ -222,7 +223,7 @@ static NSString * AFPropertyListStringFromParameters(NSDictionary *parameters) {
 @synthesize registeredHTTPOperationClassNames = _registeredHTTPOperationClassNames;
 @synthesize defaultHeaders = _defaultHeaders;
 @synthesize operationQueue = _operationQueue;
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 @synthesize networkReachability = _networkReachability;
 @synthesize networkReachabilityStatus = _networkReachabilityStatus;
 @synthesize networkReachabilityStatusBlock = _networkReachabilityStatusBlock;
@@ -244,7 +245,7 @@ static AFHTTPClient			*s_fixedClient = nil;
 	return s_fixedClient;
 }
 
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 - (BOOL) offline { return self.networkReachabilityStatus == AFNetworkReachabilityStatusNotReachable; }
 #endif
 
@@ -279,7 +280,7 @@ static AFHTTPClient			*s_fixedClient = nil;
     [self setDefaultHeader:@"User-Agent" value:[NSString stringWithFormat:@"%@/%@ (Mac OS X %@)", [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleExecutableKey] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleIdentifierKey], [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] ?: [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey], [[NSProcessInfo processInfo] operatingSystemVersionString]]];
 #endif
         
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
     self.networkReachabilityStatus = AFNetworkReachabilityStatusUnknown;
     [self startMonitoringNetworkReachability];
 #endif
@@ -291,7 +292,7 @@ static AFHTTPClient			*s_fixedClient = nil;
 }
 
 - (void)dealloc {
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
     [self stopMonitoringNetworkReachability];
     [_networkReachabilityStatusBlock release];
 #endif
@@ -310,7 +311,7 @@ static AFHTTPClient			*s_fixedClient = nil;
 
 #pragma mark -
 
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
 static BOOL AFURLHostIsIPAddress(NSURL *url) {
     struct sockaddr_in sa_in;
     struct sockaddr_in6 sa_in6;
@@ -701,7 +702,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     HTTPClient.parameterEncoding = self.parameterEncoding;
     HTTPClient.registeredHTTPOperationClassNames = [[self.registeredHTTPOperationClassNames copyWithZone:zone] autorelease];
     HTTPClient.defaultHeaders = [[self.defaultHeaders copyWithZone:zone] autorelease];
-#ifdef _SYSTEMCONFIGURATION_H
+#ifdef USE_SYSTEM_CONFIGURATION
     HTTPClient.networkReachabilityStatusBlock = self.networkReachabilityStatusBlock;
 #endif
     return HTTPClient;
