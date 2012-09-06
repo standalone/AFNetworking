@@ -228,9 +228,25 @@ static NSString * AFPropertyListStringFromParameters(NSDictionary *parameters) {
 @synthesize networkReachabilityStatusBlock = _networkReachabilityStatusBlock;
 #endif
 
-+ (AFHTTPClient *)clientWithBaseURL:(NSURL *)url {
+static AFHTTPClient			*s_fixedClient = nil;
+
++ (AFHTTPClient *) clientWithBaseURL: (NSURL *) url {
     return [[[self alloc] initWithBaseURL:url] autorelease];
 }
+
++ (AFHTTPClient *) client { return s_fixedClient ?: [self fixedClientWithBaseURL: nil]; }
+
++ (AFHTTPClient *) fixedClientWithBaseURL: (NSURL *) url {
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		s_fixedClient = [[self clientWithBaseURL: nil] retain];
+	});
+	return s_fixedClient;
+}
+
+#ifdef _SYSTEMCONFIGURATION_H
+- (BOOL) offline { return self.networkReachabilityStatus == AFNetworkReachabilityStatusNotReachable; }
+#endif
 
 - (id)initWithBaseURL:(NSURL *)url {
     self = [super init];

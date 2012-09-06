@@ -22,6 +22,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define _SYSTEMCONFIGURATION_H				1
+
 @class AFHTTPRequestOperation;
 
 /**
@@ -92,6 +94,11 @@ typedef enum {
 
 @interface AFHTTPClient : NSObject <NSCoding, NSCopying>
 
+
+//These will create/use a singleton object. Useful for Reachability
++ (AFHTTPClient *) fixedClientWithBaseURL: (NSURL *) url;
++ (AFHTTPClient *) client;
+
 ///---------------------------------------
 /// @name Accessing HTTP Client Properties
 ///---------------------------------------
@@ -125,6 +132,7 @@ typedef enum {
  */
 #ifdef _SYSTEMCONFIGURATION_H
 @property (readonly, nonatomic, assign) AFNetworkReachabilityStatus networkReachabilityStatus;
+@property (readonly) BOOL offline;
 #endif
 
 ///---------------------------------------------
