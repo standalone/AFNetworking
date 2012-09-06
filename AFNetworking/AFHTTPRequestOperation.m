@@ -316,4 +316,20 @@ didReceiveResponse:(NSURLResponse *)response
     [self.outputStream open];
 }
 
+
++ (AFHTTPRequestOperation *) HTTPRequestOperationWithRequest:(NSURLRequest *)urlRequest
+													 success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSData *data))success
+													 failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure {
+	AFHTTPRequestOperation *requestOperation = [[[AFHTTPRequestOperation alloc] initWithRequest:urlRequest] autorelease];
+    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (success) success(operation.request, operation.response, responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (failure) failure(operation.request, operation.response, error);
+    }];
+    
+    
+    return requestOperation;
+
+}
+
 @end

@@ -120,6 +120,20 @@
 - (void)setCompletionBlockWithSuccess:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
+
+/**
+ Creates and returns an `AFHTTPRequestOperation` object and sets the specified success and failure callbacks.
+ 
+ @param urlRequest The request object to be loaded asynchronously during execution of the operation.
+ @param success A block object to be executed when the request finishes successfully, with a status code in the 2xx range. This block has no return value and takes three arguments: the request object of the operation, the response for the request, and the response data.
+ @param failure A block object to be executed when the request finishes unsuccessfully. This block has no return value and takes three arguments: the request object of the operation, the response for the request, and the error associated with the cause for the unsuccessful operation.
+ 
+ @return A new http request operation
+ */
++ (AFHTTPRequestOperation *) HTTPRequestOperationWithRequest:(NSURLRequest *)urlRequest
+                                                      success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSData *data))success
+                                                      failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure;
+
 @end
 
 ///----------------
